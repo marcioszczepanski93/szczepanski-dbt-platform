@@ -1,0 +1,3 @@
+# Deps de desenvolvimento/teste. Instaladas na imagem local (nao em produção real)
+# para permitir `make test` dentro do container, com Airflow/pandera disponiveis.
+pytest

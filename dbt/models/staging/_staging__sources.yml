@@ -1,0 +1,41 @@
+version: 2
+
+sources:
+  - name: bacen
+    description: >
+      Dados brutos da API SGS do BACEN, carregados pela camada de ingestao
+      (Airflow). Uma tabela por grupo de series, todas com o mesmo formato longo:
+      um ponto (codigo_sgs, data, valor) por linha.
+    schema: raw
+    # Freshness roda com `dbt source freshness`: alerta se a ingestao parar de
+    # atualizar. ingested_at e gravado pelo loader a cada carga.
+    loaded_at_field: ingested_at
+    freshness:
+      warn_after: { count: 36, period: hour }
+      error_after: { count: 72, period: hour }
+    tables:
+      - name: bacen_inflacao
+        columns:
+          - name: codigo_sgs
+            tests: [not_null]
+          - name: data
+            tests: [not_null]
+          - name: indicador
+            tests: [not_null]
+        # Chave natural composta: nao ha ponto duplicado por serie e data.
+        tests:
+          - dbt_expectations.expect_compound_columns_to_be_unique:
+              column_list: [codigo_sgs, data]
+      - name: bacen_juros
+      - name: bacen_cambio
+      - name: bacen_credito
+      # Expectativas Focus (API Olinda), formato proprio: uma coleta por data.
+      - name: focus_expectativas
+        loaded_at_field: ingested_at
+        columns:
+          - name: indicador
+            tests: [not_null]
+          - name: data_expectativa
+            tests: [not_null]
+          - name: mediana
+            tests: [not_null]

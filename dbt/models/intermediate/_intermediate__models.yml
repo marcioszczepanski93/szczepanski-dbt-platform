@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: int_indicadores__alinhados
+    description: >
+      Indicadores macro alinhados a granularidade mensal, formato largo (uma linha
+      por mes, cada indicador numa coluna). Janela dos ultimos 10 anos.
+    columns:
+      - name: data_referencia
+        description: "Primeiro dia do mes de referencia."
+        tests: [not_null, unique]
+      - name: meta_selic
+        description: "Meta SELIC (% a.a.), ultimo valor vigente no mes."
+
+  - name: int_focus__vs_realizado
+    description: >
+      Acuracia do Focus: expectativa de IPCA 12m (mes M) versus IPCA realizado nos 12
+      meses seguintes, com desvio absoluto e percentual. Alinhamento de horizonte
+      correto; meses de horizonte ainda aberto ficam com realizado nulo.
+    columns:
+      - name: data_referencia
+        tests: [not_null]
+      - name: indicador
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["ipca_12m"]

@@ -1,0 +1,10 @@
+codigo_sgs,indicador,nome_completo,unidade,frequencia,fonte
+433,ipca,IPCA,% a.m.,Mensal,IBGE/BACEN
+7478,ipca15,IPCA-15,% a.m.,Mensal,IBGE/BACEN
+189,igpm,IGP-M,% a.m.,Mensal,FGV/BACEN
+11,selic_diaria,SELIC Diaria,% a.d.,Diaria,BACEN
+432,meta_selic,Meta SELIC,% a.a.,Por reuniao,BACEN
+1,usd_brl,Dolar americano (USD/BRL),R$,Diaria,BACEN
+21619,eur_brl,Euro (EUR/BRL),R$,Diaria,BACEN
+21082,inadimplencia_pf,Inadimplencia PF,% carteira,Mensal,BACEN
+20783,spread_medio,Spread Medio Geral,p.p.,Mensal,BACEN

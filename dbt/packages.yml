@@ -1,0 +1,5 @@
+# Pacotes dbt (instalados com `dbt deps`, NAO via pip). dbt-expectations adiciona
+# testes alem dos nativos (expect_column_values_to_*, etc.) usados nas marts.
+packages:
+  - package: metaplane/dbt_expectations
+    version: [">=0.10.0", "<0.11.0"]

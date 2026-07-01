@@ -1,0 +1,9 @@
+# Runtime do dbt — instalado num venv ISOLADO (/opt/airflow/dbt-venv), separado do
+# ambiente do Airflow, para nao colidir com o constraints file do core. Ver ADR 0001.
+# dbt-expectations NAO entra aqui: e pacote dbt, declarado em dbt/packages.yml.
+#
+# Pino explicito do dbt-core: sem ele, dbt-postgres arrasta o dbt-core 2.0.0a3
+# (dbt "Fusion", pre-release, que ainda NAO suporta o adapter Postgres). A faixa
+# <1.10 exclui o alpha 2.x e fixa a linha 1.9 estavel.
+dbt-core>=1.8,<1.10
+dbt-postgres>=1.8,<1.10

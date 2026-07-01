@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: mart_macro__painel
+    description: >
+      Painel macroeconomico mensal com indicadores e variacoes MoM/YoY. Tabela
+      principal consumida pelo Metabase.
+    columns:
+      - name: data_referencia
+        description: "Mes de referencia (primeiro dia do mes)."
+        tests: [not_null, unique]
+      - name: meta_selic
+        description: "Meta SELIC (% a.a.)."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100
+              row_condition: "meta_selic is not null"
+      - name: ipca
+        description: "IPCA do mes (% a.m.)."
+
+  - name: mart_macro__correlacoes
+    description: "Medias moveis de 3/6/12 meses de SELIC, IPCA e cambio."
+    columns:
+      - name: data_referencia
+        tests: [not_null, unique]
+
+  - name: mart_focus__acuracia
+    description: "Desvio medio das projecoes Focus de IPCA 12m por ano."
+    columns:
+      - name: ano
+        tests: [not_null]
+      - name: indicador
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["ipca_12m"]
+      - name: meses_avaliados
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 12

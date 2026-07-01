@@ -1,0 +1,12 @@
+version: 2
+
+seeds:
+  - name: dim_indicadores
+    description: "Catalogo dos indicadores: metadados (nome, unidade, frequencia, fonte)."
+    columns:
+      - name: codigo_sgs
+        description: "Codigo da serie na API SGS."
+        tests: [not_null, unique]
+      - name: indicador
+        description: "Chave semantica do indicador, usada nos modelos."
+        tests: [not_null, unique]

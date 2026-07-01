@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: stg_bacen__inflacao
+    description: "Series de inflacao (IPCA, IPCA-15, IGP-M) limpas, em formato longo."
+    columns:
+      - name: codigo_sgs
+        description: "Codigo da serie na API SGS."
+        tests: [not_null]
+      - name: indicador
+        description: "Identificador do indicador (ipca, ipca15, igpm)."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_indicadores')
+              field: indicador
+      - name: data_referencia
+        description: "Data de referencia do ponto."
+        tests: [not_null]
+      - name: valor
+        description: "Valor do indicador na data (% a.m.)."
+        tests: [not_null]
+
+  - name: stg_bacen__juros
+    description: "SELIC diaria (% a.d.) e Meta SELIC (% a.a.) em formato longo."
+    columns:
+      - name: indicador
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_indicadores')
+              field: indicador
+      - name: data_referencia
+        tests: [not_null]
+      - name: valor
+        tests: [not_null]
+
+  - name: stg_bacen__cambio
+    description: "Cotacoes diarias USD/BRL e EUR/BRL em formato longo."
+    columns:
+      - name: indicador
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_indicadores')
+              field: indicador
+      - name: data_referencia
+        tests: [not_null]
+      - name: valor
+        tests: [not_null]
+
+  - name: stg_bacen__credito
+    description: "Inadimplencia PF e spread bancario medio, mensais, em formato longo."
+    columns:
+      - name: indicador
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_indicadores')
+              field: indicador
+      - name: data_referencia
+        tests: [not_null]
+      - name: valor
+        tests: [not_null]
+
+  - name: stg_focus__ipca_12m
+    description: >
+      Expectativa Focus (mediana) de IPCA acumulado nos proximos 12 meses, por data
+      de coleta. Fonte: API Olinda "Expectativas de Mercado" do BCB.
+    columns:
+      - name: data_coleta
+        description: "Data da coleta Focus."
+        tests: [not_null]
+      - name: expectativa
+        description: "Mediana da expectativa de IPCA 12m (% a.a.)."
+        tests: [not_null]

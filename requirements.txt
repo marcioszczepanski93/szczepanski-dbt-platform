@@ -1,0 +1,18 @@
+# Deps EXTRAS sobre a imagem base apache/airflow (que ja traz o core).
+# Instaladas com o constraints file da versao do Airflow (ver docker/airflow/Dockerfile e CI).
+#
+# Importante: NAO fixar versao de pacote que ja esta no constraints do Airflow
+# (httpx, pandas, numpy, psycopg2-binary). Sob --constraint o constraint vence, e um
+# pin acima dele torna a resolucao impossivel. Deixamos esses sem versao de proposito.
+#
+# dbt NAO entra aqui: roda num venv isolado (/opt/airflow/dbt-venv), fora do constraints
+# do Airflow, para evitar conflito de dependencias. Ver dbt-requirements.txt e ADR 0001.
+# astronomer-cosmos fica no ambiente do Airflow (e um provider) e invoca o dbt do venv.
+apache-airflow-providers-standard
+apache-airflow-providers-fab
+apache-airflow-providers-smtp
+astronomer-cosmos>=1.7
+httpx
+psycopg2-binary
+pandas
+pandera>=0.20.0
