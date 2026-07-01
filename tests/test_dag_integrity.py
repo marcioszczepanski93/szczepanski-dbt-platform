@@ -24,8 +24,10 @@ def test_no_import_errors(dagbag):
 
 
 def test_dags_expected_present(dagbag):
+    # Usa o dict em memoria (dagbag.dags), nao get_dag() — este ultimo consulta o
+    # banco de metadata no Airflow 3, e o teste de integridade nao deve depender dele.
     for dag_id in ("bacen_ingestion", "bacen_transform"):
-        assert dagbag.get_dag(dag_id) is not None, f"DAG ausente: {dag_id}"
+        assert dag_id in dagbag.dags, f"DAG ausente: {dag_id}"
 
 
 def test_dags_have_tags(dagbag):

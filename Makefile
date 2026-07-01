@@ -23,11 +23,14 @@ ps:
 init:          ## Roda so o init (db migrate + cria admin)
 	docker compose up airflow-init
 
+# --entrypoint python pula o entrypoint do Airflow (que faz `airflow db check` e
+# exigiria o postgres de metadata). Os testes so importam DAGs/modulos — nao usam o
+# banco de metadata — entao rodam sem subir a stack (bom p/ DX e p/ CI).
 test:          ## Roda a suite de testes dentro do container (airflow + pandera disponiveis)
-	docker compose run --rm --no-deps airflow-scheduler python -m pytest -q
+	docker compose run --rm --no-deps --entrypoint python airflow-scheduler -m pytest -q
 
 dag-test:      ## So o teste de integridade das DAGs
-	docker compose run --rm --no-deps airflow-scheduler python -m pytest -q tests/test_dag_integrity.py
+	docker compose run --rm --no-deps --entrypoint python airflow-scheduler -m pytest -q tests/test_dag_integrity.py
 
 lint:          ## ruff + mypy
 	ruff check . && mypy include src

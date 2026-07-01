@@ -25,6 +25,10 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
     AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW_JWT_SECRET:-troque-em-producao}
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres-airflow/airflow
+    # Cosmos cacheia o `dbt ls` numa Airflow Variable (toca o banco de metadata no
+    # parse). Desligado: o parse fica independente do banco (testes/CI sem a stack) e
+    # o grafo nunca fica defasado. Custo: `dbt ls` roda a cada parse (segundos).
+    AIRFLOW__COSMOS__ENABLE_CACHE: "False"
     PYTHONPATH: /opt/airflow
   volumes:
     - ./dags:/opt/airflow/dags

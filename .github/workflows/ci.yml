@@ -64,4 +64,11 @@ jobs:
       - uses: actions/checkout@v4
       - run: cp .env.example .env
       - run: docker compose build airflow-scheduler
+      # O parse da DAG Cosmos roda `dbt ls`, que precisa do dbt-expectations resolvido.
+      # dbt deps popula ./dbt/dbt_packages (volume montado) antes dos testes.
+      - name: dbt deps
+        run: >-
+          docker compose run --rm --no-deps
+          --entrypoint /opt/airflow/dbt-venv/bin/dbt airflow-scheduler
+          deps --project-dir /opt/airflow/dbt --profiles-dir /opt/airflow/dbt
       - run: make test

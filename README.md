@@ -15,7 +15,7 @@ a diferenca de foco e a camada dbt, que a plataforma de dados nao tem.
   Fontes                    Plataforma (este repo)                     Consumo
   ┌──────────┐   ┌──────────────────────────────────────────────┐   ┌──────────┐
   │ BCB SGS  │   │  Airflow 3 (LocalExecutor)                    │   │ Metabase │
-  │ (series) │──▶│  bacen_ingestion  →  Asset  →  bacen_transform│──▶│(dashboards│
+  │ (series) │──▶│  bacen_ingestion  →  Asset  →  bacen_transform│──▶│dashboards│
   │ BCB Olinda│  │  (SGS + Olinda)              (dbt via Cosmos) │   │  nos marts│
   │ (Focus)  │   │        │                          │           │   └──────────┘
   └──────────┘   │        ▼                          ▼           │
