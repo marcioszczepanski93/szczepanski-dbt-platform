@@ -57,7 +57,7 @@ def _parse(codigo: int, indicador: str, payload: list[dict[str, Any]]) -> list[S
     for item in payload:
         data_iso = datetime.strptime(item["data"], "%d/%m/%Y").date().isoformat()
         valor_raw = item.get("valor")
-        valor = float(valor_raw) if valor_raw not in (None, "") else None
+        valor = None if valor_raw is None or valor_raw == "" else float(valor_raw)
         registros.append(SerieRecord(codigo, indicador, data_iso, valor))
     return registros
 

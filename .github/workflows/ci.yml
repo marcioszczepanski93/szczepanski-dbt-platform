@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  quality:
+    name: lint + mypy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff mypy
+      - run: ruff check .
+      - run: mypy include src
+
+  dbt:
+    name: dbt build (fixture)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: bacen
+          POSTGRES_PASSWORD: changeme
+          POSTGRES_DB: bacen_analytics
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U bacen"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      WAREHOUSE_HOST: localhost
+      WAREHOUSE_PORT: "5432"
+      WAREHOUSE_DB: bacen_analytics
+      WAREHOUSE_USER: bacen
+      WAREHOUSE_PASSWORD: changeme
+      PGPASSWORD: changeme
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "dbt-postgres>=1.8,<1.10"
+      - run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Schema raw + fixture
+        run: |
+          psql -h localhost -U bacen -d bacen_analytics -f migrations/001_raw_schema.sql
+          psql -h localhost -U bacen -d bacen_analytics -f migrations/002_focus_expectativas.sql
+          psql -h localhost -U bacen -d bacen_analytics -f ci/fixtures/sample_raw.sql
+      - run: dbt deps --project-dir dbt --profiles-dir dbt
+      - run: dbt build --project-dir dbt --profiles-dir dbt
+
+  integration:
+    name: dag integrity + testes (imagem)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cp .env.example .env
+      - run: docker compose build airflow-scheduler
+      - run: make test

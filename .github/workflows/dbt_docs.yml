@@ -1,0 +1,63 @@
+name: dbt docs
+
+# Gera a documentacao dbt (catalogo + grafo de linhagem) e publica no GitHub Pages
+# a cada merge na main. O catalogo exige os objetos materializados, entao rodamos
+# um build contra um Postgres efemero com a mesma fixture do CI.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: bacen
+          POSTGRES_PASSWORD: changeme
+          POSTGRES_DB: bacen_analytics
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U bacen"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      WAREHOUSE_HOST: localhost
+      WAREHOUSE_PORT: "5432"
+      WAREHOUSE_DB: bacen_analytics
+      WAREHOUSE_USER: bacen
+      WAREHOUSE_PASSWORD: changeme
+      PGPASSWORD: changeme
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "dbt-postgres>=1.8,<1.10"
+      - run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Schema raw + fixture
+        run: |
+          psql -h localhost -U bacen -d bacen_analytics -f migrations/001_raw_schema.sql
+          psql -h localhost -U bacen -d bacen_analytics -f migrations/002_focus_expectativas.sql
+          psql -h localhost -U bacen -d bacen_analytics -f ci/fixtures/sample_raw.sql
+      - name: Build + docs
+        run: |
+          dbt deps --project-dir dbt --profiles-dir dbt
+          dbt build --project-dir dbt --profiles-dir dbt
+          dbt docs generate --project-dir dbt --profiles-dir dbt
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dbt/target
+      - uses: actions/deploy-pages@v4
