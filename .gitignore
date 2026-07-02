@@ -13,6 +13,9 @@ logs/
 # Ambiente
 .env
 
+# Docs internas de desenvolvimento (nao versionadas)
+.specs/
+
 # dbt
 dbt/target/
 dbt/dbt_packages/

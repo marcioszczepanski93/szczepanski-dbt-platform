@@ -83,5 +83,3 @@ As decisoes nao triviais estao registradas em [`docs/adr/`](docs/adr/):
 ## Documentacao complementar
 
 - Especificacao tecnica: [`bacen-macro-pipeline-spec.md`](bacen-macro-pipeline-spec.md)
-- Plano didatico da camada dbt: [`.specs/features/dbt-implementation-plan.md`](.specs/features/dbt-implementation-plan.md)
-- Contexto para desenvolvimento: [`.specs/features/CLAUDE.md`](.specs/features/CLAUDE.md)
