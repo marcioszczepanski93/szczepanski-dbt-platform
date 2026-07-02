@@ -56,11 +56,9 @@ jobs:
           dbt deps --project-dir dbt --profiles-dir dbt
           dbt build --project-dir dbt --profiles-dir dbt
           dbt docs generate --project-dir dbt --profiles-dir dbt
-      # enablement: true cria/habilita o Pages site automaticamente (precisa de
-      # pages: write), evitando o passo manual em Settings -> Pages.
+      # Pages precisa ser habilitado uma vez em Settings -> Pages -> Source: GitHub
+      # Actions (o GITHUB_TOKEN do workflow nao tem permissao para CRIAR o site).
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dbt/target
