@@ -63,12 +63,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: cp .env.example .env
-      - run: docker compose build airflow-scheduler
-      # O parse da DAG Cosmos roda `dbt ls`, que precisa do dbt-expectations resolvido.
-      # dbt deps popula ./dbt/dbt_packages (volume montado) antes dos testes.
-      - name: dbt deps
-        run: >-
-          docker compose run --rm --no-deps
-          --entrypoint /opt/airflow/dbt-venv/bin/dbt airflow-scheduler
-          deps --project-dir /opt/airflow/dbt --profiles-dir /opt/airflow/dbt
-      - run: make test
+      # make ci-integration = build + dbt deps + testes. Roteado por make de proposito:
+      # o Makefile exporta AIRFLOW_UID=$(id -u), entao o container roda como o usuario do
+      # runner e consegue escrever dbt_packages no volume montado (uid 50000 nao conseguiria).
+      - run: make ci-integration

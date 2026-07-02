@@ -32,6 +32,12 @@ test:          ## Roda a suite de testes dentro do container (airflow + pandera 
 dag-test:      ## So o teste de integridade das DAGs
 	docker compose run --rm --no-deps --entrypoint python airflow-scheduler -m pytest -q tests/test_dag_integrity.py
 
+ci-integration: ## Usado pelo CI: build + dbt deps + testes (tudo com AIRFLOW_UID do runner)
+	docker compose build airflow-scheduler
+	docker compose run --rm --no-deps --entrypoint /opt/airflow/dbt-venv/bin/dbt \
+		airflow-scheduler deps --project-dir /opt/airflow/dbt --profiles-dir /opt/airflow/dbt
+	docker compose run --rm --no-deps --entrypoint python airflow-scheduler -m pytest -q
+
 lint:          ## ruff + mypy
 	ruff check . && mypy include src
 
